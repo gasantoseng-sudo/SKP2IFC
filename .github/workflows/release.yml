@@ -30,6 +30,9 @@ jobs:
       - name: Instalar dependências
         run: pip install -r requirements.txt
 
+      - name: Conferir se nenhum módulo do app ficou de fora
+        run: python -c "import skp2ifc_core, ifc_optimize, viewer_core, updater, version, cli; print('módulos ok')"
+
       - name: Compilar o .exe
         run: >
           python -m PyInstaller --noconfirm --onefile --windowed --name SKP2IFC
