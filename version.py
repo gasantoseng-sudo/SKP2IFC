@@ -8,7 +8,7 @@ __version__ = "1.4.0"
 APP_NAME = "SKP2IFC"
 
 # >>> Troque pelo seu repositório no GitHub (formato "usuario/repositorio"). <<<
-GITHUB_REPO = "SEU-USUARIO/skp2ifc"
+GITHUB_REPO = "gasantoseng-sudo/skp2ifc"
 
 ASSET_NAME = "SKP2IFC.exe"             # arquivo do .exe dentro da Release
 HASH_ASSET_NAME = "SKP2IFC.exe.sha256"  # soma de verificação publicada junto
