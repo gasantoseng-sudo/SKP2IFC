@@ -1,4 +1,4 @@
-# SKP → IFC (para o AltoQi Eberick)
+# SKP → IFC
 
 Converte arquivos `.skp` em `.ifc` **sem precisar do SketchUp instalado**
 (leitor open source OpenSKP + escrita com ifcopenshell).
