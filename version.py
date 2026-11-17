@@ -4,7 +4,7 @@ Para publicar uma versão nova: aumente __version__, atualize o CHANGELOG.md e e
 (ex.: v1.5.0) para o GitHub. O fluxo em .github/workflows/release.yml compila o .exe e cria a Release.
 """
 
-__version__ = "1.4.0"
+__version__ = "1.4.1"
 APP_NAME = "SKP2IFC"
 
 # >>> Troque pelo seu repositório no GitHub (formato "usuario/repositorio"). <<<
