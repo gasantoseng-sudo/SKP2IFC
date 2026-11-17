@@ -1,0 +1,51 @@
+name: Publicar versão
+
+# Dispare enviando uma tag, por exemplo:  git tag v1.5.0 && git push origin v1.5.0
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Conferir se a tag bate com version.py
+        shell: bash
+        run: |
+          V=$(python -c "import version; print(version.__version__)")
+          if [ "v$V" != "${{ github.ref_name }}" ]; then
+            echo "A tag ${{ github.ref_name }} não bate com version.py (v$V). Ajuste e envie a tag de novo."
+            exit 1
+          fi
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Compilar o .exe
+        run: >
+          python -m PyInstaller --noconfirm --onefile --windowed --name SKP2IFC
+          --collect-all ifcopenshell --collect-all openskp --collect-all trimesh
+          --collect-all fast_simplification --hidden-import PIL.ImageTk app.py
+
+      - name: Gerar o SHA-256
+        shell: pwsh
+        run: |
+          $h = (Get-FileHash dist\SKP2IFC.exe -Algorithm SHA256).Hash.ToLower()
+          "$h  SKP2IFC.exe" | Out-File -Encoding ascii dist\SKP2IFC.exe.sha256
+
+      - name: Criar a Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/SKP2IFC.exe
+            dist/SKP2IFC.exe.sha256
+          generate_release_notes: true
