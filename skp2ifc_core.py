@@ -122,8 +122,10 @@ def clear_cache() -> None:
 
 
 # --------------------------------------------------------------------------
-# Correção do leitor do openskp (1.5.0) para .skp antigos (SketchUp 2018-2020) em que
-# cada tag (layer) aponta para um objeto CCustomLineStyle ("Solid Basic", ...).
+# Correções do leitor do openskp (1.5.0) para .skp antigos:
+# (1) SketchUp 2018-2020: cada tag (layer) aponta para um objeto CCustomLineStyle ("Solid Basic", ...).
+# (2) SketchUp 2013 e similares: o registro CImage não tem o GUID final.
+# Sobre (1):
 # O estilo vem gravado logo depois do registro da tag; sem este ajuste a leitura
 # para com "no reader for class CCustomLineStyle". Não afeta arquivos sem esse objeto.
 _PATCHED = False
@@ -173,6 +175,23 @@ def _patch_openskp() -> None:
 
     readers["CCustomLineStyle"] = read_line_style
     readers["CLayer"] = read_layer
+
+    # CImage em arquivos antigos (SketchUp 2013 e similares, sem "persistent id"): o registro
+    # termina na string do caminho, SEM o GUID de 16 bytes que o leitor espera nos arquivos 2017+.
+    orig_image = readers.get("CImage")
+    if orig_image is not None:
+        def read_image(ar, r):
+            if getattr(ar, "has_pid", True):
+                return orig_image(ar, r)
+            legacy._preamble(ar, r)
+            db = legacy._drawbase(ar, r)
+            ds, _dn, _ = ar.read_object(r)       # definição que contém a imagem
+            xform = r.f64s(12)
+            r.f64()                               # constante 1.0
+            r.utf16()                             # caminho de origem
+            return {"k": "image", "db": db, "def": ds, "xform": xform, "guid": ""}
+
+        readers["CImage"] = read_image
 
 
 def load_scene(path: str, status: StatusFn = _noop, use_cache: bool = True):
