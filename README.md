@@ -62,23 +62,3 @@ coordenadas dos cantos mínimo/máximo. Cores por tag (SKP) ou por tag/classe (I
 O app mostra a versão no título e tem o botão **Verificar atualizações** (e a opção "Verificar ao abrir").
 Ele consulta a última Release do GitHub, baixa o `SKP2IFC.exe`, confere o SHA-256 publicado junto e troca o
 programa sozinho (o antigo fica como `.old` por alguns instantes e é apagado na próxima abertura).
-
-### Configuração (uma vez)
-1. Crie um repositório público no GitHub (ex.: `seu-usuario/skp2ifc`) e envie estes arquivos.
-2. Em `version.py`, troque `GITHUB_REPO = "SEU-USUARIO/skp2ifc"` pelo seu usuário/repositório.
-3. No GitHub: Settings > Actions > General > Workflow permissions > **Read and write permissions**.
-
-### Publicar uma versão nova
-1. Aumente `__version__` em `version.py` (ex.: `1.5.0`) e escreva o que mudou em `CHANGELOG.md`.
-2. `git commit -am "v1.5.0"`, depois `git tag v1.5.0` e `git push origin main v1.5.0`.
-3. O fluxo `.github/workflows/release.yml` compila o `.exe` no Windows, gera o `.sha256` e cria a Release.
-   Em poucos minutos os usuários veem "Nova versão disponível".
-
-Sem GitHub Actions: compile com `Compilar.bat`, gere o hash (`certutil -hashfile dist\SKP2IFC.exe SHA256`),
-crie a Release manualmente anexando `SKP2IFC.exe` e `SKP2IFC.exe.sha256` (conteúdo: o hash e o nome do arquivo).
-
-### Cuidados
-- A tag precisa bater com `version.py` (o fluxo recusa se não bater).
-- A troca automática só funciona no `.exe`; rodando por Python o app só abre a página de download.
-- Distribuindo para qualquer pessoa, o Windows SmartScreen pode alertar em `.exe` sem assinatura digital.
-  Um certificado de assinatura de código elimina o alerta (é pago).
