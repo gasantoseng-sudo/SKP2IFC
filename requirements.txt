@@ -1,0 +1,6 @@
+openskp>=1.5
+ifcopenshell>=0.8
+numpy
+pillow
+fast-simplification
+pyinstaller
